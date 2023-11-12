@@ -57,36 +57,43 @@ def get_ticket_input():
 def purchase_tickets():
     global train_journeys
 
-    # Get user input
-    num_passengers, selected_departure, selected_return, selected_direction = get_ticket_input()
+    while True:
+        # Get user input
+        num_passengers, selected_departure, selected_return, selected_direction = get_ticket_input()
 
-    # Check if tickets are available for both departure and return journeys
-    if (
-        not train_journeys[selected_departure][selected_direction]["closed"]
-        and not train_journeys[selected_return][selected_direction]["closed"]
-        and train_journeys[selected_departure][selected_direction]["available_seats"] >= num_passengers
-        and train_journeys[selected_return][selected_direction]["available_seats"] >= num_passengers
-    ):
-        # Calculate total price including group discount
-        total_price = TICKET_PRICE * num_passengers
-        num_groups = num_passengers // GROUP_DISCOUNT_THRESHOLD
-        total_price -= TICKET_PRICE * num_groups
+        # Check if tickets are available for both departure and return journeys
+        if (
+            not train_journeys[selected_departure][selected_direction]["closed"]
+            and not train_journeys[selected_return][selected_direction]["closed"]
+            and train_journeys[selected_departure][selected_direction]["available_seats"] >= num_passengers
+            and train_journeys[selected_return][selected_direction]["available_seats"] >= num_passengers
+        ):
+            # Calculate total price including group discount
+            total_price = TICKET_PRICE * num_passengers
+            num_groups = num_passengers // GROUP_DISCOUNT_THRESHOLD
+            total_price -= TICKET_PRICE * num_groups
 
-        # Update available seats and total money
-        train_journeys[selected_departure][selected_direction]["available_seats"] -= num_passengers
-        train_journeys[selected_return][selected_direction]["available_seats"] -= num_passengers
-        total_money = total_price
+            # Update available seats and total money
+            train_journeys[selected_departure][selected_direction]["available_seats"] -= num_passengers
+            train_journeys[selected_return][selected_direction]["available_seats"] -= num_passengers
+            total_money = total_price
 
-        # Display updated screen
-        print(f"\nTickets purchased for {num_passengers} passengers on the {selected_departure} {selected_direction} journey.")
-        print(f"Return journey selected: {selected_return}")
-        print(f"Total cost: ${total_price:.2f}")
-        print(f"Seats available for {selected_departure} {selected_direction} journey: {train_journeys[selected_departure][selected_direction]['available_seats']}")
-    else:
-        print(f"\nTickets not available for {num_passengers} passengers on the chosen journeys.")
+            # Display updated screen
+            print(f"\nTickets purchased for {num_passengers} passengers on the {selected_departure} {selected_direction} journey.")
+            print(f"Return journey selected: {selected_return}")
+            print(f"Total cost: ${total_price:.2f}")
+            print(f"Seats available for {selected_departure} {selected_direction} journey: {train_journeys[selected_departure][selected_direction]['available_seats']}")
 
-# Test the purchase_tickets function
+            # Ask if the user wants to continue booking
+            continue_booking = input("Do you want to continue booking? (yes/no): ").lower()
+            if continue_booking != 'yes':
+                break  # Exit the loop if the user does not want to continue
+        else:
+            print(f"\nTickets not available for {num_passengers} passengers on the chosen journeys.")
+
+# Test the updated purchase_tickets function
 purchase_tickets()
+
 
 
 # Task 3 - End of the day
